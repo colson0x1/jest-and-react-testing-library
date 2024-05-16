@@ -5,6 +5,7 @@ import App from './App';
 // in the testing output. It's helpful if we have a App with more than one test.
 // The second argument is an anonymous function which contains the actual
 // testing code.
+
 test('renders React for Developers link', () => {
   // render the App with the help of RTL
   render(<App />);
