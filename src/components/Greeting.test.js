@@ -109,6 +109,23 @@ describe('<Greeting />', () => {
 
   test('does not render "good to see you" if the button was clicked', () => {
     // @ Stage 1: Arrange
+    // After adding Ouput component, the nice thing which we'll notice is that,
+    // the tests (for Greeting component here) simply continue to work.
+    // So that's the good thing about `render()` which we use to render the
+    // greeting component.
+    // It really renders this entire component tree that is required here.
+    // So it renders not just Greeting and ignores other components used in that
+    // JSX but it renders the content of those components like in this case,
+    // the Output component as well.
+    // And technically, we could therefore call this an integration test
+    // because now more than one unit, more than one component is involved.
+    // But especially when dealing with such a wrapper component which doesn't
+    // have its own logic, that's of course not really the right term.
+    // Testing the conjunction of these two components together i.e Greeting and
+    // Output, is absolutely fine.
+    // We might wanna split them, if the Output component  becomes more complex
+    // and also starts managing state, then we might wanna test that separately
+    // from the core logic of the Greeting  component.
     render(<Greeting />);
 
     // @ Stage 2: Act
