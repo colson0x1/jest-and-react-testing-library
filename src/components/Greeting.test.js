@@ -3,6 +3,9 @@
 
 // `screen` gives us access to this virtual DOM, which was rendered
 import { render, screen } from '@testing-library/react';
+// `userEvent` is an object that helps us trigger user events in this virtual
+// screen.
+import userEvent from '@testing-library/user-event';
 import Greeting from './Greeting.jsx';
 
 // Test Suites vs Tests
@@ -26,7 +29,7 @@ import Greeting from './Greeting.jsx';
 // As our application grows, we definitely wanna group our tests like this!!
 describe('<Greeting />', () => {
   // We can write test by using this `test()` function which is globally available.
-  test('renders Hello World as a text', () => {
+  test('renders "Hello World" as a text', () => {
     // Here we wanna write the test by using the 3 A's.
     // * First A stands for 'Arrange'
     // Here we wanna setup our tests. For example we wanna render a component
@@ -77,5 +80,57 @@ describe('<Greeting />', () => {
     // would fail if no element would be found.
     // Here we want to check if this element is in the document
     expect(helloWorldElement).toBeInTheDocument();
+  });
+
+  test('renders "good to see you" if the button was NOT clicked', () => {
+    render(<Greeting />);
+
+    const outputElement = screen.getByText('good to see you', { exact: false });
+    expect(outputElement).toBeInTheDocument();
+  });
+
+  test('renders "Changed!" if the button was clicked', () => {
+    // @ Stage 1: Arrange
+    render(<Greeting />);
+
+    // @ Stage 2: Act
+    // select button
+    // we can get it by role and button is a role elements can have on the screen
+    // since there is only one button in Greeting component, that will give
+    // us access to that 1 button
+    const buttonElement = screen.getByRole('button');
+    // that's above is the button which we wanna simulate a click
+    userEvent.click(buttonElement);
+
+    // @ Stage 3: Assert
+    const outputElement = screen.getByText('Changed!');
+    expect(outputElement).toBeInTheDocument();
+  });
+
+  test('does not render "good to see you" if the button was clicked', () => {
+    // @ Stage 1: Arrange
+    render(<Greeting />);
+
+    // @ Stage 2: Act
+    const buttonElement = screen.getByRole('button');
+    userEvent.click(buttonElement);
+
+    // @ Stage 3: Assert
+    const outputElement = screen.queryByText('good to see you', {
+      exact: false,
+    });
+    // Now `getByText` will fail if an element is not found. And here our
+    // expectation is actually that it's not found.
+    // But again, since this i.e getByText, would throw an error if it's not
+    // found. This test could never pass if the element is not found even though
+    // that is what we want.
+    // So that's then a reason for using `queryByText` because that will simply
+    // return null if the element is not found. And therefore, actually here
+    // we then wanna check if output element is null and for that we got
+    // the `toBeNull` method here.
+    // So here we wanna check if that's (i.e outputElement), is null because
+    // that would be our expectation since we don't want to find this element
+    // (i.e outputElement), if the button i.e buttonElement, was clicked.
+    expect(outputElement).toBeNull();
   });
 });
